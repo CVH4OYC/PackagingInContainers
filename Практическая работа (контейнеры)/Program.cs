@@ -7,6 +7,7 @@ using Практическая_работа__контейнеры_.Models;
 Console.WriteLine("Выберите режим работы программы:");
 Console.WriteLine("1 - Решение задачи");
 Console.WriteLine("2 - Экспериментальная часть");
+Console.WriteLine("3 - Экспериментальная часть (замеры времени с записью их в файл)");
 Console.Write("Введите номер режима: ");
 int mode = int.Parse(Console.ReadLine());
 
@@ -14,10 +15,15 @@ if (mode == 1)
 {
     Solve();
 }
-else
+else if (mode == 2)
 {
     var experiment = new Experiment(maxTimeInMinutes: 3);
     experiment.RunExperiment();
+}
+else
+{
+    var exp = new ExperimentForGraphics();
+    exp.RunExperiment();
 }
 
 

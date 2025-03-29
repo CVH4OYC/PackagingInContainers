@@ -1,13 +1,14 @@
 ﻿using System.Diagnostics;
 using Практическая_работа__контейнеры_.Algorithms;
 using Практическая_работа__контейнеры_.Helpers;
+using Практическая_работа__контейнеры_.Models;
 
 namespace Практическая_работа__контейнеры_;
 
 public class Experiment
 {
     private readonly int MaxTimeInMs;
-    private const int CONTAINER_CAPACITY = 20;
+    private const int CONTAINER_CAPACITY = 500;
 
     public Experiment(int maxTimeInMinutes = 3)
     {
@@ -51,7 +52,7 @@ public class Experiment
 
     private void RunTestsForVolume(int volume)
     {
-        const int NumberOfTests = 100;
+        const int NumberOfTests = 10;
 
         double totalTimeBF = 0;
         double totalTimeFF = 0;
@@ -67,6 +68,8 @@ public class Experiment
         {
             Console.WriteLine($"Тестовый запуск {i + 1} на V = {volume}");
             var items = TestGenerator.GenerateItems(volume, CONTAINER_CAPACITY);
+            //var items = GenerateItemsWithFixedWeight(volume, 251);
+
 
             var resultBrute = MeasureWithResult(() => BruteForceFF.Run(items, CONTAINER_CAPACITY));
             var resultFF = MeasureWithResult(() => FirstFit.Run(items, CONTAINER_CAPACITY));
@@ -87,6 +90,14 @@ public class Experiment
 
             totalDeviationFF += Math.Abs((double)(solutionFF - optimalSolution) / optimalSolution);
             totalDeviationBF += Math.Abs((double)(solutionBF - optimalSolution) / optimalSolution);
+            if (Math.Abs((double)(solutionFF - optimalSolution) / optimalSolution) > 1.7)
+            {
+                Console.WriteLine("Отклонение превышено для FF");
+            }
+            if (Math.Abs((double)(solutionBF - optimalSolution) / optimalSolution) > 1.7)
+            {
+                Console.WriteLine("Отклонение превышено для BF");
+            }
         }
 
         Console.WriteLine($"\nОбъем данных: {volume}");
@@ -107,5 +118,16 @@ public class Experiment
         var result = algorithm();
         stopwatch.Stop();
         return (result, stopwatch.ElapsedMilliseconds);
+    }
+    private List<Item> GenerateItemsWithFixedWeight(int volume, int weight)
+    {
+        var items = new List<Item>();
+
+        for (int i = 0; i < volume; i++)
+        {
+            items.Add(new Item(weight, i + 1));
+        }
+
+        return items;
     }
 }
